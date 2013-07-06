@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="InlinePath_Specs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestFeature.cs" />
+    <Compile Include="when_turning_a_feature_on_after_time_T.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -2,7 +2,6 @@
 {
     using NUnit.Framework;
 
-
     [TestFixture]
     public class Using_a_fooid_inline
     {
@@ -42,11 +41,6 @@
 
             var value = fooId.Iff(() => 27, () => 42);
             Assert.AreEqual(27, value);
-        }
-
-        class TestFeature :
-            FooId
-        {
         }
     }
 }
