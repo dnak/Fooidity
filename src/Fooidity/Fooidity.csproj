@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="DisabledFooId.cs" />
     <Compile Include="EnabledAfter.cs" />
+    <Compile Include="EnabledDuring.cs" />
     <Compile Include="EnabledFooId.cs" />
     <Compile Include="EnabledForAuthenticatedIdentity.cs" />
     <Compile Include="FooIds.cs" />
