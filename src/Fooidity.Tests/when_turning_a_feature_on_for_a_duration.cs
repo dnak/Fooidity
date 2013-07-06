@@ -4,8 +4,17 @@ using NUnit.Framework;
 namespace Fooidity.Tests
 {
     [TestFixture]
-    public class when_turning_a_feature_on_during_a_time_span
+    public class when_turning_a_feature_on_for_a_duration
     {
+        [Test]
+        public void then_the_feature_is_disabled_for_an_invalid_configuration()
+        {
+            var foo = new EnabledDuring<TestFeature>(DateTimeOffset.MaxValue,
+                                                     DateTimeOffset.MinValue);
+
+            Assert.IsFalse(foo.Enabled);
+        }
+
         [Test]
         public void then_the_feature_is_disabled_prior_to_the_start()
         {
