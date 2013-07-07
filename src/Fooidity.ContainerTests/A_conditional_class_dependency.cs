@@ -19,9 +19,7 @@
 
             var container = builder.Build();
 
-            var conditionalClass = container.Resolve<ConditionalClass>();
-
-            Assert.AreEqual("V2: 42, Test", conditionalClass.FunctionCall(42, "Test"));
+            WillUseNewImplementation(container);
         }
 
         [Test]
@@ -35,9 +33,7 @@
 
             var container = builder.Build();
 
-            var conditionalClass = container.Resolve<ConditionalClass>();
-
-            Assert.AreEqual("Old: 42, Test", conditionalClass.FunctionCall(42, "Test"));
+            WillUseOldImplementation(container);
         }
 
         [Test]
@@ -51,9 +47,7 @@
 
             var container = builder.Build();
 
-            var conditionalClass = container.Resolve<ConditionalClass>();
-
-            Assert.AreEqual("Old: 42, Test", conditionalClass.FunctionCall(42, "Test"));
+            WillUseOldImplementation(container);
         }
 
         [Test]
@@ -67,16 +61,63 @@
 
             var container = builder.Build();
 
-            var conditionalClass = container.Resolve<ConditionalClass>();
-
-            Assert.AreEqual("Old: 42, Test", conditionalClass.FunctionCall(42, "Test"));
+            WillUseOldImplementation(container);
 
             container.Enable<UseNewMethod>();
 
-            conditionalClass = container.Resolve<ConditionalClass>();
+            WillUseNewImplementation(container);
 
+        }
+
+        [Test]
+        public void Should_retain_fooid_state_for_lifetime_of_scope()
+        {
+            var builder = new ContainerBuilder();
+            builder.Enabled<UseNewMethod>();
+            builder.RegisterType<ConditionalClass>().InstancePerMatchingLifetimeScope("session");
+
+            var container = builder.Build();
+            using (var initialScope = container.BeginLifetimeScope("session"))
+            {
+                WillUseNewImplementation(initialScope);
+
+                container.Disable<UseNewMethod>();
+
+                WillUseNewImplementation(initialScope);
+            }
+        }
+
+        [Test]
+        public void Should_reevaluate_fooid_state_for_new_lifetime_scope()
+        {
+            var builder = new ContainerBuilder();
+            builder.Enabled<UseNewMethod>();
+            builder.RegisterType<ConditionalClass>().InstancePerMatchingLifetimeScope("session");
+
+            var container = builder.Build();
+            using (var initialScope = container.BeginLifetimeScope("session"))
+            {
+                WillUseNewImplementation(initialScope);
+
+                container.Disable<UseNewMethod>();
+                using (var subsequentScope = container.BeginLifetimeScope("session"))
+                {
+                    WillUseOldImplementation(subsequentScope);
+                }
+            }
+        }
+
+        private static void WillUseNewImplementation(ILifetimeScope scope)
+        {
+            var conditionalClass = scope.Resolve<ConditionalClass>();
             Assert.AreEqual("V2: 42, Test", conditionalClass.FunctionCall(42, "Test"));
+        }
 
+        private static void WillUseOldImplementation(ILifetimeScope scope)
+        {
+            var conditionalClass = scope.Resolve<ConditionalClass>();
+
+            Assert.AreEqual("Old: 42, Test", conditionalClass.FunctionCall(42, "Test"));
         }
     }
 }
