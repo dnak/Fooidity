@@ -1,0 +1,49 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".cs" #>
+
+namespace Fooidity
+{
+<# for(int i=1; i<=16; i++){
+    var tGenericArgs = String.Join(",",Enumerable.Range(1,i).Select(it=>String.Format("T{0}",it)));
+    var tConstructorArgs = String.Join(", ", Enumerable.Range(1,i).Select(it=>String.Format("FooId<T{0}> arg{0}",it)));
+	var constraintFormatter = System.Environment.NewLine + "\t\t\t";
+	var tConstraints = String.Join(constraintFormatter, Enumerable.Range(1,i)
+							.Select(it=>String.Format("where T{0} : FooId",it)));
+	var fieldFormatter = System.Environment.NewLine + "\t\t";
+	var tFields = String.Join(fieldFormatter, Enumerable.Range(1,i)
+							.Select(it=>String.Format("private readonly FooId<T{0}> _arg{0};",it)));
+	var initializationFormatter = System.Environment.NewLine + "\t\t\t";
+	var tInitialization = String.Join(initializationFormatter, Enumerable.Range(1,i)
+							.Select(it=>String.Format("_arg{0} = arg{0};",it)));
+	var tSerialize = String.Join(initializationFormatter, Enumerable.Range(1,i)
+							.Select(it=>String.Format("result += serializer.Serialize(_arg{0});",it)));
+#>
+    public class Evaluation<<#=tGenericArgs#>>
+			<#=tConstraints#>
+    {
+		<#=tFields#>
+
+        public Evaluation(<#=tConstructorArgs#>)
+        {
+			<#=tInitialization#>
+        }    
+        
+		public EvaluationResult Capture()
+		{
+			var serializer = new EvaluationSerializer();
+			var result = string.Empty;
+			
+			<#=tSerialize#>
+
+			return new EvaluationResult(result);
+		}
+	}
+
+<# 
+    }
+#>   
+
+	
+}

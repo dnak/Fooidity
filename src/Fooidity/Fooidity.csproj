@@ -39,6 +39,13 @@
     <Compile Include="EnabledDuring.cs" />
     <Compile Include="EnabledFooId.cs" />
     <Compile Include="EnabledForAuthenticatedIdentity.cs" />
+    <Compile Include="Evaluation.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Evaluation.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EvaluationResult.cs" />
+    <Compile Include="EvaluationSerializer.cs" />
     <Compile Include="FooIds.cs" />
     <Compile Include="FooId.cs" />
     <Compile Include="EnabledByRoleInThreadPrincipal.cs" />
@@ -51,6 +58,10 @@
     <Compile Include="SlowRollout.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Evaluation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Evaluation.cs</LastGenOutput>
+    </None>
     <None Include="IfExtensions.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IfExtensions.cs</LastGenOutput>
