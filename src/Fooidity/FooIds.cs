@@ -23,8 +23,7 @@
         {
             return Cache<T>.EnabledFooId;
         }
-
-
+        
         static class Cache<T>
             where T : FooId
         {

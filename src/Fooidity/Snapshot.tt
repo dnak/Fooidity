@@ -13,32 +13,33 @@ namespace Fooidity
 							.Select(it=>String.Format("where T{0} : FooId",it)));
 	var fieldFormatter = System.Environment.NewLine + "\t\t";
 	var tFields = String.Join(fieldFormatter, Enumerable.Range(1,i)
-							.Select(it=>String.Format("private readonly FooId<T{0}> _arg{0};",it)));
+							.Select(it=>String.Format("public FooId<T{0}> FooId{0} {{ get; private set; }}",it)));
 	var initializationFormatter = System.Environment.NewLine + "\t\t\t";
 	var tInitialization = String.Join(initializationFormatter, Enumerable.Range(1,i)
-							.Select(it=>String.Format("_arg{0} = arg{0};",it)));
+							.Select(it=>String.Format("FooId{0} = arg{0};",it)));
 	var tSerialize = String.Join(initializationFormatter, Enumerable.Range(1,i)
-							.Select(it=>String.Format("result += serializer.Serialize(_arg{0});",it)));
+							.Select(it=>String.Format("result += serializer.Serialize(FooId{0});",it)));
 #>
-    public class Evaluation<<#=tGenericArgs#>>
+    public class Snapshot<<#=tGenericArgs#>>
 			<#=tConstraints#>
     {
-		<#=tFields#>
-
-        public Evaluation(<#=tConstructorArgs#>)
+        public Snapshot(<#=tConstructorArgs#>)
         {
 			<#=tInitialization#>
         }    
-        
-		public EvaluationResult Capture()
+
+		public EvaluationResult Serialize()
 		{
-			var serializer = new EvaluationSerializer();
+			var serializer = new EvaluationSerializer();	
 			var result = string.Empty;
-			
+
 			<#=tSerialize#>
 
 			return new EvaluationResult(result);
 		}
+
+		<#=tFields#>
+
 	}
 
 <# 

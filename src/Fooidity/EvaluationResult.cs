@@ -1,4 +1,5 @@
-﻿namespace Fooidity
+﻿
+namespace Fooidity
 {
     public class EvaluationResult
     {

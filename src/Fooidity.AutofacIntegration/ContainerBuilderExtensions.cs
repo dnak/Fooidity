@@ -1,4 +1,6 @@
-﻿namespace Fooidity
+﻿using Fooidity.AutofacIntegration;
+
+namespace Fooidity
 {
     using System;
     using Autofac;
@@ -73,6 +75,13 @@
             builder.RegisterType<DisabledFooId<TFoo>>()
                    .As<FooId<TFoo>>()
                    .SingleInstance();
+        }
+
+        public static void RegisterFooId<TFoo>(this ContainerBuilder builder)
+            where TFoo : DependentFooId
+        {
+            builder.Register(context => new AutoFacDependentFooIdBuilder<TFoo>(context).BuildFooId())
+                   .As<FooId<TFoo>>();
         }
 
         public static void RegisterFooId<TFoo>(this ContainerBuilder builder, Func<FooId<TFoo>> fooIdFactory)

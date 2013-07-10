@@ -9,24 +9,39 @@ namespace Fooidity.Tests
         [Test]
         public void then_the_evaluation_is_retained()
         {
-            Evaluation<T1> evaluation = new Evaluation<T1>(new EnabledFooId<T1>());
-            string result = evaluation.Capture().Results;
+            var fooid = FooIds.Enabled<Foo1>();
+            string result = fooid.Capture().Serialize().Results;   // ugly ass - fix
             Console.WriteLine(result);
-            string expected = "{\"Fooidity.Tests.T1\":{\"Enabled\":\"True\"}}";
+            string expected = "{\"Fooidity.Tests.Foo1\":{\"Enabled\":\"True\"}}";
             Assert.AreEqual(expected, result);
         }
-
     }
 
-    internal class T1 : FooId
+    [TestFixture]
+    public class when_evaluating_a_dependent_fooId
+    {
+        [Test]
+        public void then_()
+        {
+            DependentFooIdBuilder<Dependent> builder = new DependentFooIdBuilder<Dependent>();
+            
+            Assert.IsTrue(builder.BuildFooId().Enabled);
+        }
+    }
+
+    internal interface Dependent : When<Foo1>
     {
     }
 
-    internal class T2 : FooId
+    internal class Foo1 : FooId
     {
     }
 
-    internal class T3 : FooId
+    internal class Foo2 : FooId
+    {
+    }
+
+    internal class Foo3 : FooId
     {
     }
 }

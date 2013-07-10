@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContainerBuilderExtensions.cs" />
+    <Compile Include="AutoFacDependentFooIdBuilder.cs" />
     <Compile Include="FooIdContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
