@@ -1,0 +1,85 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".cs" #>
+
+namespace Fooidity
+{
+	using System;
+	using System.Linq;
+	using System.Collections.Generic;
+
+<# for(int i=1; i<=16; i++){
+    var tGenericArgs = String.Concat("T,", String.Join(",",Enumerable.Range(1,i).Select(it=>String.Format("T{0}",it))));
+    var constraintFormatter = "\n\t\t";
+	var tConstraints = String.Join(constraintFormatter, Enumerable.Range(1,i)
+							.Select(it=>String.Format("where T{0} : FooId",it)));
+	var tNext = i+1;
+#>	
+    public class CompositeBuilder<<#=tGenericArgs#>>
+        where T : FooId
+		<#=tConstraints#>
+    {
+        private readonly Resolver _resolver;
+		private readonly Action<FooId<T>> _registration;
+        private readonly CompositeFooId<<#=tGenericArgs#>> _fooId;
+
+        public CompositeBuilder(Resolver resolver, Action<FooId<T>> registration, CompositeFooId<<#=tGenericArgs#>> fooId)
+        {
+            _resolver = resolver;
+			_registration = registration;
+            _fooId = fooId;
+        }
+
+		<# if (i<16) { #>
+
+        public CompositeBuilder<<#=tGenericArgs#>, T<#=tNext#>> When<T<#=tNext#>>() where T<#=tNext#> : FooId
+        {
+			var composite = new CompositeFooId<<#=tGenericArgs#>, T<#=tNext#>>(() => _fooId.Enabled);
+            composite.When(new DeferredEvaluation<T<#=tNext#>>(() => _resolver.Resolve<T<#=tNext#>>().Enabled));
+            return new CompositeBuilder<<#=tGenericArgs#>, T<#=tNext#>>(_resolver, _registration, composite);
+        }
+		
+        public CompositeBuilder<<#=tGenericArgs#>, T<#=tNext#>> Unless<T<#=tNext#>>() where T<#=tNext#> : FooId
+        {
+			var composite = new CompositeFooId<<#=tGenericArgs#>, T<#=tNext#>>(() => _fooId.Enabled);
+            composite.Unless(new DeferredEvaluation<T<#=tNext#>>(() => _resolver.Resolve<T<#=tNext#>>().Enabled));
+            return new CompositeBuilder<<#=tGenericArgs#>, T<#=tNext#>>(_resolver, _registration, composite);
+        }
+		<# } #>
+
+        public FooId<T> Build()
+        {
+			_registration(_fooId);
+            return _fooId;
+        }
+    }
+<# } #>
+
+    public class CompositeBuilder<T>
+        where T : FooId
+    {
+        private readonly Resolver _resolver;
+		private readonly Action<FooId<T>> _registration;
+
+        public CompositeBuilder(Resolver resolver, Action<FooId<T>> registration)
+        {
+            _resolver = resolver;
+			_registration = registration;
+        }
+
+        public CompositeBuilder<T, T1> When<T1>() where T1 : FooId
+        {
+            var composite = new CompositeFooId<T, T1>();
+            composite.When(new DeferredEvaluation<T1>(() => _resolver.Resolve<T1>().Enabled));
+            return new CompositeBuilder<T, T1>(_resolver, _registration, composite);
+        }
+		
+        public CompositeBuilder<T, T1> Unless<T1>() where T1 : FooId
+        {
+            var composite = new CompositeFooId<T, T1>();
+            composite.Unless(new DeferredEvaluation<T1>(() => _resolver.Resolve<T1>().Enabled));
+            return new CompositeBuilder<T, T1>(_resolver, _registration, composite);
+        }
+    }   	
+}

@@ -76,9 +76,9 @@ namespace Fooidity
                    .As<FooId<TFoo>>()
                    .SingleInstance();
         }
-
+        
         public static void RegisterFooId<TFoo>(this ContainerBuilder builder)
-            where TFoo : DependentFooId
+            where TFoo : FooId
         {
             builder.Register(context => new AutoFacDependentFooIdBuilder<TFoo>(context).BuildFooId())
                    .As<FooId<TFoo>>();

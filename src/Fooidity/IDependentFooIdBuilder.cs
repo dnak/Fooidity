@@ -17,7 +17,7 @@ namespace Fooidity
         public FooId<T> BuildFooId()
         {
 
-            return new DependentOnEvaluation<T>(() => true);
+            return new DeferredEvaluation<T>(() => true);
         }
     }
 }

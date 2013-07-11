@@ -23,19 +23,19 @@ namespace Fooidity.AutofacIntegration
             foreach (var i in interfaces.Where(i => i.IsGenericType))
             {
                 Type genericTypeDefinition = i.GetGenericTypeDefinition();
-                if (genericTypeDefinition == typeof (When<>))
-                {
-                    dependentEvaluations.Add(BuildEvaluation(i, InvokeEnabled));
-                }
-                else if (genericTypeDefinition == typeof (Unless<>))
-                {
-                    dependentEvaluations.Add(BuildEvaluation(i, InvokeOppositeOfEnabled));
-                }
+                //if (genericTypeDefinition == typeof (When<>))
+                //{
+                //    dependentEvaluations.Add(BuildEvaluation(i, InvokeEnabled));
+                //}
+                //else if (genericTypeDefinition == typeof (Unless<>))
+                //{
+                //    dependentEvaluations.Add(BuildEvaluation(i, InvokeOppositeOfEnabled));
+                //}
             }
 
             Func<bool> fullEvaluation = () => dependentEvaluations.All(evaluation => evaluation());
 
-            return new DependentOnEvaluation<T>(fullEvaluation);
+            return new DeferredEvaluation<T>(fullEvaluation);
         }
         
         private Func<bool> BuildEvaluation(Type interfaceType, 

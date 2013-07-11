@@ -17,19 +17,7 @@ namespace Fooidity.Tests
         }
     }
 
-    [TestFixture]
-    public class when_evaluating_a_dependent_fooId
-    {
-        [Test]
-        public void then_()
-        {
-            DependentFooIdBuilder<Dependent> builder = new DependentFooIdBuilder<Dependent>();
-            
-            Assert.IsTrue(builder.BuildFooId().Enabled);
-        }
-    }
-
-    internal interface Dependent : When<Foo1>
+    internal interface Dependent : FooId
     {
     }
 

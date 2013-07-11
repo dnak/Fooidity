@@ -1,0 +1,57 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".cs" #>
+
+namespace Fooidity
+{
+	using System;
+	using System.Linq;
+	using System.Collections.Generic;
+
+<# for(int i=1; i<=16; i++){
+    var tGenericArgs = String.Concat("T,", String.Join(",",Enumerable.Range(1,i).Select(it=>String.Format("T{0}",it))));
+    var constraintFormatter = "\n\t\t";
+	var tConstraints = String.Join(constraintFormatter, Enumerable.Range(1,i)
+							.Select(it=>String.Format("where T{0} : FooId",it)));
+	
+#>	
+    public class CompositeFooId<<#=tGenericArgs#>> : FooId<T> 
+        where T : FooId
+		<#=tConstraints#>
+    {
+        private readonly List<Func<bool>> _evaluations = new List<Func<bool>>(); 
+		
+        public CompositeFooId()
+        {
+            
+        }
+
+        public CompositeFooId(Func<bool> _initialEvaluation)
+        {
+            _evaluations.Add(_initialEvaluation);
+        }
+
+        public bool Enabled 
+		{ 
+			get
+			{
+				return _evaluations.All(evaluation => evaluation());
+			}
+		}
+		
+	<# for(int j=1; j<=i; j++){	#>	
+        public CompositeFooId<<#=tGenericArgs#>> When(FooId<T<#=j#>> fooId)
+        {
+            _evaluations.Add(() => fooId.Enabled);
+            return this;
+        }
+
+        public CompositeFooId<<#=tGenericArgs#>> Unless(FooId<T<#=j#>> fooId)
+        {
+            _evaluations.Add(() => !fooId.Enabled);
+            return this;
+        }<# } #>   
+    }
+<# } #>   	
+}

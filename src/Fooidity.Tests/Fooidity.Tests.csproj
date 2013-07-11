@@ -42,6 +42,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestFeature.cs" />
     <Compile Include="when_capturing_feature_evaluation.cs" />
+    <Compile Include="when_evaluating_a_dependent_fooId.cs" />
     <Compile Include="when_turning_a_feature_on_after_time_T.cs" />
     <Compile Include="when_turning_a_feature_on_for_a_duration.cs" />
   </ItemGroup>

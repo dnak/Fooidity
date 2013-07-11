@@ -40,6 +40,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutofacResolver.cs" />
     <Compile Include="ContainerBuilderExtensions.cs" />
     <Compile Include="AutoFacDependentFooIdBuilder.cs" />
     <Compile Include="FooIdContainer.cs" />

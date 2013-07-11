@@ -34,8 +34,17 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependentFooId.cs" />
-    <Compile Include="DependentOnEvaluation.cs" />
+    <Compile Include="CompositeFooId.cs">
+      <DependentUpon>CompositeFooId.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CompositeBuilder.cs">
+      <DependentUpon>CompositeBuilder.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DeferredEvaluation.cs" />
     <Compile Include="DisabledFooId.cs" />
     <Compile Include="EnabledAfter.cs" />
     <Compile Include="EnabledDuring.cs" />
@@ -43,6 +52,7 @@
     <Compile Include="EnabledForAuthenticatedIdentity.cs" />
     <Compile Include="EvaluationResult.cs" />
     <Compile Include="IDependentFooIdBuilder.cs" />
+    <Compile Include="Resolver.cs" />
     <Compile Include="Snapshot.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -62,6 +72,14 @@
     <Compile Include="SnapshotExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CompositeFooId.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompositeFooId.cs</LastGenOutput>
+    </None>
+    <None Include="CompositeBuilder.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompositeBuilder.cs</LastGenOutput>
+    </None>
     <None Include="Snapshot.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Snapshot.cs</LastGenOutput>

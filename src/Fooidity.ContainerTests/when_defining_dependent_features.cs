@@ -5,24 +5,35 @@ using NUnit.Framework;
 
 namespace Fooidity.ContainerTests
 {
+    public static class AutofacCompositeBuilderExtensions
+    {
+        public static CompositeBuilder<TFoo> Compose<TFoo>(this ContainerBuilder builder)
+            where TFoo : FooId
+        {
+            return
+                new CompositeBuilder<TFoo>(new AutofacResolver(),
+                                                t =>
+                                                builder.RegisterInstance<FooId<TFoo>>(t));
+                   
+        }
+    }
+
     [TestFixture]
     public class when_defining_dependent_features
     {
-        [Test]
-        public void then_an_injected_function_can_be_used()
-        {
-            Func<bool> expression = () => true;
-            DependentOnEvaluation<A> fooId = new DependentOnEvaluation<A>(expression);
-
-            Assert.IsTrue(fooId.Enabled);
-        }
-
         [Test]
         public void then_enabled_dependencies_enable_the_fooid()
         {
             var builder = new ContainerBuilder();
             builder.Enabled<A>();
             builder.Enabled<B>();
+
+            builder.Compose<ReallyCoolFeature>()
+                .When<A>()
+                .When<B>()
+                .Build();
+            
+            // builder.Composite<ReallyCoolFeature>().When<A>().Unless<B>();
             builder.RegisterFooId<ReallyCoolFeature>(); 
             builder.RegisterType<ReallyAwesomeImplementation>();
             var container = builder.Build();
@@ -133,11 +144,11 @@ namespace Fooidity.ContainerTests
         }
     }
 
-    public interface ReallyCoolFeature : When<A>, When<B>
+    public interface ReallyCoolFeature : FooId
     {
     }
 
-    public interface ConflictsWithFooIdB : When<A>, Unless<B>
+    public interface ConflictsWithFooIdB : FooId
     {
     }
     
